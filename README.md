@@ -1,5 +1,20 @@
-silverorange Intermediate Developer Assessment
+# silverorange Intermediate Developer Assessment
+## Log
+
+### Time allocation
+
+- 30 min read instruction, clear assumptions, setup and debug
+- 1h30min backend
+- 2h frontend
+- Kryptonie: TypeScript
+### Errors
+
+- [yarn start error](https://stackoverflow.com/questions/26262196/debug-is-not-a-recognized-command-express)
+- [end of line sequence error](https://stackoverflow.com/questions/53516594/why-do-i-keep-getting-delete-cr-prettier-prettier)
+
 ==============================================
+
+## Instructions
 
 This exercise is designed to assess how you approach tasks required in your
 position as an intermediate developer at silverorange. We are interested to see

@@ -1,57 +1,92 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import './App.css';
 
-const fillerRepo = {
-  name: 'hi',
-  description: 'filler',
-  language: 'english',
-  forks: 0,
-};
+interface RepoData {
+  id: string;
+  name: string;
+  description: string;
+  language: string;
+  forks: number;
+}
+
+/*
+TODO:
+
+- To sort repo on the front-end: how to handle snake_case?
+  - maybe filter data before sending on the backend?
+- collect languages when fetch (reduce)
+- display languages as button (map)
+- filter repo everytime selectedLanguage changes  (useMemo)
+- turn repo into button
+- fetch commit data for the repo
+- fetch markdown for the repo
+
+*/
 
 export function App() {
-  const [displayData, setDisplayData] = useState([fillerRepo]);
-  const [success, setSuccess] = useState(true);
+  // const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [repoList, setRepoList] = useState<RepoData[]>([]);
+  // const [languages, setLanguages] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:4000/repos')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === 500) {
-          setSuccess(false);
-          setDisplayData(data.message);
-          return;
-        }
-        setDisplayData(data);
-        setSuccess(true);
-      })
-      .catch((error) => {
-        setDisplayData(error);
-        setSuccess(false);
-      });
+    toast.promise(
+      getRepos()
+        .then((repos) => {
+          // const repoLanguages = repos.map((repo) => repo.language);
+          setRepoList(repos);
+          // setLanguages(repoLanguages);
+        })
+        .catch((error) => {
+          console.log(error);
+        }),
+      {
+        loading: 'Fetching data...',
+        success: <b>All done!</b>,
+        error: <b>Oops. Something went wrong.</b>,
+      }
+    );
   }, []);
 
-  console.log(displayData);
+  // console.log(languages);
+  // console.log(selectedLanguage);
+
+  const getRepos = () => {
+    return fetch('http://localhost:4000/repos').then((res) => res.json());
+  };
+
+  // const filteredRepoList = useMemo(() => {
+  //   if (selectedLanguage.length > 0) {
+  //     return reposByLanguages[selectedLanguage];
+  //   }
+
+  //   return repoList;
+  // }, [repoList, reposByLanguages, selectedLanguage]);
 
   return (
     <div className="App">
-      {success && Array.isArray(displayData) ? (
-        <ul>
-          {displayData.map((repo, index) => (
-            <li key={index}>
-              {repo.name}
-              <ul>
-                <li>
-                  Description: {repo.description ? repo.description : 'none'}
-                </li>
-                <li>Language: {repo.language}</li>
-                <li>Forks: {repo.forks}</li>
-              </ul>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>{displayData}</p>
-      )}
+      <Toaster />
+      {/* <div>
+        {languages.map((language) => (
+          <button key={language} onClick={() => setSelectedLanguage(language)}>
+            {language}
+          </button>
+        ))}
+      </div> */}
+      <ul>
+        {repoList.map((repo) => (
+          <li key={repo.id}>
+            {repo.name}
+            <ul>
+              <li>
+                description: {repo.description ? repo.description : 'none'}
+              </li>
+              <li>language: {repo.language}</li>
+              <li>forks: {repo.forks}</li>
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

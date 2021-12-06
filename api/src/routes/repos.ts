@@ -26,8 +26,13 @@ repos.get('/', async (_: Request, res: Response) => {
     const localRepos = JSON.parse(rawFileData);
     allRepos.push(...localRepos);
 
-    //Filter repos
-    allRepos = allRepos.filter((repo: any) => !repo.fork);
+    //Process repos
+    allRepos = allRepos
+      .filter((repo: any) => !repo.fork)
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
 
     result = allRepos;
   } catch (error) {
